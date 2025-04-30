@@ -5,7 +5,7 @@ import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 import { AdvancedImage } from "@cloudinary/react";
 
 function App() {
-  const apiKey = process.env.REACT_APP_AMPLI_API_KEY;
+  // const apiKey = process.env.REACT_APP_AMPLI_API_KEY;
 
   const cld = new Cloudinary({ cloud: { cloudName: "dwi8mo6ev" } });
 
