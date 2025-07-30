@@ -1,33 +1,256 @@
+/* App Container */
 .App {
-  text-align: center;
-  padding: 40px;
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.6;
+  color: #333;
 }
 
-.App > div {
+.App h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Login Form Container */
+.login-container {
+  background: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.login-title {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Section Headers */
+.section-header {
+  color: #34495e;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 20px 0 15px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3498db;
+}
+
+.section-header:first-of-type {
+  margin-top: 0;
+}
+
+/* Form Groups */
+.form-group {
   margin-bottom: 20px;
 }
 
-.App button {
-  padding: 10px 20px;
-  background-color: #007bff;
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #2c3e50;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-group textarea {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-help {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
   border: none;
-  border-radius: 6px;
-  color: white;
+  border-radius: 8px;
   font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
 
-.App button:hover {
-  background-color: #0056b3;
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  width: 100%;
 }
 
-.App img,
-.App .cld-video-player {
+.btn-primary:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-success {
+  background-color: #27ae60;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #229954;
+}
+
+.btn-disabled {
+  background-color: #95a5a6;
+  color: white;
+  cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+  background-color: #95a5a6;
+  transform: none;
+}
+
+/* User Info Display */
+.user-info {
+  background: linear-gradient(135deg, #e8f5e8 0%, #d5eddb 100%);
+  border: 1px solid #27ae60;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.user-info h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #27ae60;
+  font-size: 1.3rem;
+}
+
+.user-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.user-info strong {
+  color: #2c3e50;
+}
+
+.custom-props {
+  margin-top: 15px;
+}
+
+.custom-props-code {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  margin-top: 8px;
+  white-space: pre;
+}
+
+/* Main Content */
+.main-content {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.main-button {
+  margin-bottom: 30px;
+}
+
+.image-container {
+  margin-top: 30px;
+}
+
+.image-container img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App {
+    padding: 15px;
+  }
+  
+  .login-container {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .App h1 {
+    font-size: 1.5rem;
+  }
+  
+  .login-title {
+    font-size: 1.3rem;
+  }
+  
+  .section-header {
+    font-size: 1rem;
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
