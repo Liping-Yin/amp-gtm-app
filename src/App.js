@@ -15,9 +15,13 @@ function App() {
   const [userProperties, setUserProperties] = useState(''); // User properties (optional)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // State for group testing - clarified structure
-  const [groupValue, setGroupValue] = useState(''); // Group value for testing (01, 02, etc.)
-  const [groupProperties, setGroupProperties] = useState(''); // Group properties (if provided, triggers group identification)
+  // State for group testing - completely optional
+  const [groupValue, setGroupValue] = useState(''); // Group value for testing (optional)
+  const [groupProperties, setGroupProperties] = useState(''); // Group properties (optional)
+
+  // State for manual event testing
+  const [eventName, setEventName] = useState(''); // Manual event name
+  const [eventProperties, setEventProperties] = useState(''); // Manual event properties
 
   // Use this sample image or upload your own via the Media Explorer
   const img = cld
@@ -76,17 +80,16 @@ function App() {
       console.log('User ID:', userId);
       console.log('User properties sent:', finalUserProps);
 
-      // 2. Group identification - only if group properties are provided
-      if (groupProperties.trim() && groupValue.trim()) {
+      // 2. Group identification - only if group value is provided
+      if (groupValue.trim()) {
         const groupProps = parseCustomProperties(groupProperties);
         
         window.analytics.group(groupValue, groupProps);
         
         console.log('Group Value:', groupValue);
         console.log('Group properties sent:', groupProps);
-      } else if (groupProperties.trim() && !groupValue.trim()) {
-        alert('Group Value is required when Group Properties are provided');
-        return;
+      } else {
+        console.log('No group value provided - skipping group identification');
       }
 
       // 3. Track login event
@@ -95,15 +98,19 @@ function App() {
         timestamp: new Date().toISOString()
       };
       
-      // Add group info to event if group is identified
-      if (groupProperties.trim() && groupValue.trim()) {
+      // Add group info to event if group value is provided
+      if (groupValue.trim()) {
         eventProps.group_value = groupValue;
       }
 
       window.analytics.track('User Logged In', eventProps);
 
       setIsLoggedIn(true);
-      console.log('User logged in and tracked!', { userId, groupValue: groupValue || 'none', hasGroupProps: !!groupProperties.trim() });
+      console.log('User logged in and tracked!', { 
+        userId, 
+        groupValue: groupValue || 'none', 
+        hasGroupValue: !!groupValue.trim() 
+      });
     }
   };
 
@@ -123,7 +130,48 @@ function App() {
     setGroupValue('');
     setUserProperties('');
     setGroupProperties('');
+    setEventName('');
+    setEventProperties('');
     console.log('User logged out and analytics reset!');
+  };
+
+  // Handle manual event triggering
+  const handleManualEvent = (e) => {
+    e.preventDefault();
+    
+    if (!isLoggedIn) {
+      alert('Please login first to trigger events');
+      return;
+    }
+
+    if (!eventName.trim()) {
+      alert('Please enter an Event Name');
+      return;
+    }
+
+    if (window.analytics) {
+      const eventProps = parseCustomProperties(eventProperties);
+      const finalEventProps = {
+        user_id: userId,
+        timestamp: new Date().toISOString(),
+        triggered_manually: true,
+        ...eventProps
+      };
+
+      // Add group info if available
+      if (groupValue.trim()) {
+        finalEventProps.group_value = groupValue;
+      }
+
+      window.analytics.track(eventName, finalEventProps);
+      
+      console.log('Manual event triggered:', eventName);
+      console.log('Event properties sent:', finalEventProps);
+      
+      // Clear the form after successful trigger
+      setEventName('');
+      setEventProperties('');
+    }
   };
 
   // Segment Analytics Implementation - Track page load only when logged in
@@ -137,13 +185,13 @@ function App() {
       };
       
       // Add group info if available
-      if (groupProperties.trim() && groupValue.trim()) {
+      if (groupValue.trim()) {
         eventProps.group_value = groupValue;
       }
       
       window.analytics.track('App Loaded', eventProps);
     }
-  }, [isLoggedIn, userId, groupValue, groupProperties]);
+  }, [isLoggedIn, userId, groupValue]);
 
   // Event handlers for tracking
   const handleButtonClick = () => {
@@ -156,7 +204,7 @@ function App() {
       };
       
       // Add group info if available
-      if (groupProperties.trim() && groupValue.trim()) {
+      if (groupValue.trim()) {
         eventProps.group_value = groupValue;
       }
       
@@ -176,7 +224,7 @@ function App() {
       };
       
       // Add group info if available
-      if (groupProperties.trim() && groupValue.trim()) {
+      if (groupValue.trim()) {
         eventProps.group_value = groupValue;
       }
       
@@ -225,7 +273,7 @@ function App() {
             <h3 className="section-header">Group Testing (Optional)</h3>
             
             <div className="form-group">
-              <label>Group Value (for testing):</label>
+              <label>Group Value (optional):</label>
               <input
                 type="text"
                 value={groupValue}
@@ -233,7 +281,7 @@ function App() {
                 placeholder="e.g., 01, 02, company-123"
               />
               <div className="form-help">
-                Test group identifier (01, 02, etc.) - company_id is the group type
+                Optional test group identifier (01, 02, etc.) - leave empty to skip group identification
               </div>
             </div>
 
@@ -246,7 +294,7 @@ function App() {
                 rows="3"
               />
               <div className="form-help">
-                If provided, will identify user with this group. If empty, no group identification.
+                Optional properties for the group (only used if Group Value is provided)
               </div>
             </div>
 
@@ -269,21 +317,66 @@ function App() {
             </div>
           )}
           
-          {groupProperties.trim() && groupValue.trim() ? (
+          {groupValue.trim() ? (
             <div>
               <p><strong>Group Value:</strong> {groupValue}</p>
-              <p><strong>Group Properties:</strong></p>
-              <div className="custom-props-code">
-                {JSON.stringify(parseCustomProperties(groupProperties), null, 2)}
-              </div>
+              {groupProperties.trim() ? (
+                <div>
+                  <p><strong>Group Properties:</strong></p>
+                  <div className="custom-props-code">
+                    {JSON.stringify(parseCustomProperties(groupProperties), null, 2)}
+                  </div>
+                </div>
+              ) : (
+                <p><strong>Group Properties:</strong> None (empty object sent to Segment)</p>
+              )}
             </div>
           ) : (
-            <p><strong>Group:</strong> Not identified (no group properties provided)</p>
+            <p><strong>Group:</strong> Not identified (no group value provided)</p>
           )}
           
           <button onClick={handleLogout} className="btn btn-danger">
             Logout
           </button>
+        </div>
+      )}
+
+      {/* Manual Event Testing - Only show when logged in */}
+      {isLoggedIn && (
+        <div className="login-container fade-in">
+          <h2 className="login-title">Manual Event Testing</h2>
+          <form onSubmit={handleManualEvent}>
+            <div className="form-group">
+              <label>Event Name (required):</label>
+              <input
+                type="text"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+                placeholder="e.g., Purchase Completed, Page Viewed, Custom Action"
+                required
+              />
+              <div className="form-help">
+                Name of the event you want to track
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Event Properties (optional):</label>
+              <textarea
+                value={eventProperties}
+                onChange={(e) => setEventProperties(e.target.value)}
+                placeholder={`JSON: {"product": "Pro Plan", "price": 99, "currency": "USD"}\nKey:value: product:Pro Plan, price:99, currency:USD`}
+                rows="3"
+              />
+              <div className="form-help">
+                Optional properties for this event (product, price, category, etc.)
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary">
+              Trigger Event
+            </button>
+          </form>
         </div>
       )}
 
